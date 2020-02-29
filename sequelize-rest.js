@@ -27,12 +27,20 @@ app.post("/movie", (req, res, next) => {
     .catch(next)
 })
 
+// app.get("/movie", (req, res, next) => {
+//   Movie.findAll()
+//     .then(movie => {
+//       res.json(movie)
+//     })
+//     .catch(next)
+// })
+
 app.get("/movie", (req, res, next) => {
-  Movie.findAll()
-    .then(movie => {
-      res.json(movie)
-    })
-    .catch(next)
+  const limit = Math.min(req.query.limit || 10, 100)
+  const offset = req.query.offset || 0
+  Movie.findAndCountAll({ limit, offset })
+    .then(result => res.send({ movies: result.rows, total: result.count }))
+    .catch(error => next(error))
 })
 
 app.get("/movie/:movieId", (req, res, next) => {
