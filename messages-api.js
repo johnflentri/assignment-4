@@ -7,7 +7,6 @@ const maxMessages = 5
 let messageCounter = 0
 app.use(jsonParser)
 
-
 const messagesLimit = (req, res, next) => {
   messageCounter += 1
   if (messageCounter > maxMessages) {
@@ -16,7 +15,9 @@ const messagesLimit = (req, res, next) => {
   return next()
 }
 
-app.post('/messages', messagesLimit, (req, res) => {
+app.use(messagesLimit)
+
+app.post('/messages', (req, res) => {
   if (req.body.text && req.body.text !== "") {
     return res.json({ message: req.body.text })
   }
